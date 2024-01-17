@@ -16,7 +16,7 @@ pipeline {
         }
         stage('Checkout from Git') {
             steps {
-                git branch: 'main', url: 'https://github.com/Sheetal-2912/test.git'
+                git branch: 'main', url: 'https://github.com/Chanhakya/Myflix.git'
             }
         }
         stage("Sonarqube Analysis "){
@@ -51,10 +51,10 @@ pipeline {
             steps {
                 script {
                     withDockerRegistry(credentialsId: 'docker', toolName: 'docker'){   
-                     //  sh "docker tag myflix-ui shee2912/myflix-ui:latest "
-                       //sh "docker push shee2912/myflix-ui:latest "
-                       //sh "docker tag myflix-api shee2912/myflix-api:latest "
-                       //sh "docker push shee2912/myflix-api:latest "
+                     //  sh "docker tag myflix-ui suryacb/myflix-ui:latest "
+                       //sh "docker push suryacb/myflix-ui:latest "
+                       //sh "docker tag myflix-api suryacb/myflix-api:latest "
+                       //sh "docker push suryacb/myflix-api:latest "
                         sh "docker-compose push"
                     }
                 }
@@ -62,15 +62,15 @@ pipeline {
         }
         stage("TRIVY"){
             steps{
-                sh "trivy image shee2912/myflix-api:latest > trivyimageapi.txt" 
-                sh "trivy image shee2912/myflix-ui:latest > trivyimageui.txt" 
+                sh "trivy image suryacb/myflix-api:latest > trivyimageapi.txt" 
+                sh "trivy image suryacb/myflix-ui:latest > trivyimageui.txt" 
             }
         }
         stage('Deploy to Container') {
             steps {
                 script {
-                    sh 'docker run -d --name ui -p 3000:3000 shee2912/myflix-ui:latest'
-                    sh 'docker run -d --name api -p 4000:4000 shee2912/myflix-api:latest'
+                    sh 'docker run -d --name ui -p 3000:3000 suryacb/myflix-ui:latest'
+                    sh 'docker run -d --name api -p 4000:4000 suryacb/myflix-api:latest'
                 }
             }
         }
@@ -79,14 +79,11 @@ pipeline {
      post {
         always {
             // This post section will run after all stages, regardless of success or failure
-
-                emailext attachLog: true,
- 		      subject: "Your Build ${currentBuild.result}",
+ 		      emailext subject: "Your Build ${currentBuild.result}",
                       body: "Check the build console output at ${BUILD_URL} to view the results.",
-                      to: 'sheetalgowda7777@gmail.com',
-                      replyTo: 'sheetalgowda7777@gmail.com',
-                      mimeType: 'text/html',
-		      attachmentsPattern: 'trivyfs.txt,trivyimageapi.txt,trivyimageui.txt'
+                      to: 'chanhakyabolisetti@gmail.com',
+                      replyTo: 'chanhakyabolisetti@gmail.com',
+                      mimeType: 'text/html'
         }
     }
 }
